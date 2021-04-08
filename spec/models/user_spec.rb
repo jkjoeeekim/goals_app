@@ -12,21 +12,42 @@
 require 'rails_helper'
 
 RSpec.describe User, type: :model do
-
-    describe 'uniqueness' do
-        before(:each) do
-            create(:user)
-        end
-
-        it { should validate_uniqueness_of(:username) }
+    before(:each) do
+        create(:user)
     end
 
-    describe 'presence' do
-        before(:each) do
-            create(:user)
+    it { should validate_uniqueness_of(:username) }
+
+    it { should validate_presence_of(:password_digest) }
+    it { should validate_presence_of(:session_token) }
+
+
+    # describe 'uniqueness' do
+    #     before(:each) do
+    #         create(:user)
+    #     end
+
+    #     it { should validate_uniqueness_of(:username) }
+    # end
+
+    # describe 'presence' do
+    #     before(:each) do
+    #         create(:user)
+    #     end
+
+    #     it { should validate_presence_of(:password_digest) }
+    #     it { should validate_presence_of(:session_token) }
+    # end
+
+    describe '.find_by_credentials' do
+        user1 = User.create(username: "joey", password: "right_password")
+
+        it "returns user given good credentials" do
+            expect(User.find_by_credentials("joey", "right_password").username).to eq(user1.username)
         end
 
-        it { should validate_presence_of(:password_digest) }
-        it { should validate_presence_of(:session_token) }
+        it "returns nil given bad credentials" do
+            expect(User.find_by_credentials("joey", "wrong_password")).to eq(nil)
+        end
     end
 end
