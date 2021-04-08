@@ -26,7 +26,7 @@ RSpec.describe User, type: :model do
 
 
     it "creates a password_digest when a password is given" do
-        expect(:password_digest).to_not be_nil
+        expect(user.password_digest).to_not be_nil
     end
 
     it "creates a session_token before validation" do
