@@ -5,9 +5,10 @@ feature 'the signup process', type: :feature do
 
     before(:each) do
         visit(new_user_url)
-        subject(:user) do
-            FactoryBot.build(:user)
-        end
+        FactoryBot.build(:user)
+        # subject(:user) do
+        #     FactoryBot.build(:user)
+        # end
     end
 
     # subject(:user) do
@@ -18,7 +19,8 @@ feature 'the signup process', type: :feature do
 
     scenario 'has a new user page' do
         expect(page).to have_content('Sign Up')
-        expect(page).to have_content('Register')
+        expect(page).to have_content('Username:')
+        expect(page).to have_content('Password:')
     end
 
     feature 'signing up a user', type: :feature do
