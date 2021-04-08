@@ -12,42 +12,46 @@
 require 'rails_helper'
 
 RSpec.describe User, type: :model do
-    before(:each) do
-        create(:user)
+    subject(:user) do
+        FactoryBot.build(:user,
+            username: "jkjoey",
+            password: "good_password")
     end
 
     it { should validate_uniqueness_of(:username) }
 
     it { should validate_presence_of(:password_digest) }
     it { should validate_presence_of(:session_token) }
+    it { should validate_length_of(:password).is_at_least(6) }
 
+    it "creates a password_digest when a password is given" do
+        expect(:password_digest).to_not be_nil
+    end
 
-    # describe 'uniqueness' do
-    #     before(:each) do
-    #         create(:user)
-    #     end
-
-    #     it { should validate_uniqueness_of(:username) }
-    # end
-
-    # describe 'presence' do
-    #     before(:each) do
-    #         create(:user)
-    #     end
-
-    #     it { should validate_presence_of(:password_digest) }
-    #     it { should validate_presence_of(:session_token) }
-    # end
+    it "creates a session_token before validation" do
+        user.valid?
+        expect(user.session_token).to_not be_nil
+    end
 
     describe '.find_by_credentials' do
-        user1 = User.create(username: "joey", password: "right_password")
-
+        before { user.save! }
         it "returns user given good credentials" do
-            expect(User.find_by_credentials("joey", "right_password").username).to eq(user1.username)
+            expect(User.find_by_credentials("jkjoey", "good_password").username).to eq(user.username)
         end
 
         it "returns nil given bad credentials" do
             expect(User.find_by_credentials("joey", "wrong_password")).to eq(nil)
+        end
+    end
+
+    describe '#reset_session_token' do
+        it "assigns a new session_token to the user" do
+            old_session_token = user.session_token
+            expect(user.reset_session_token).to_not eq(old_session_token)
+        end
+
+        it "returns the new session_token" do
+            expect(user.reset_session_token).to eq(user.session_token)
         end
     end
 end
