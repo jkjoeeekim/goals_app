@@ -14,8 +14,4 @@ FactoryBot.define do
         username { |n| Faker::Internet.username }
         password { |n| Faker::Internet.password(min_length: 6) }
     end
-
-    factory :username_check do
-        username { |n| Faker::Internet.username }
-    end
 end
